@@ -27,3 +27,7 @@
 *.exe
 *.out
 *.app
+
+# VS files
+Debug_to_ignore
+x64_to_ignore
