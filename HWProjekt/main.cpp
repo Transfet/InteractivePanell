@@ -9,8 +9,11 @@
 #include "ColorDetection.h"
 #include <algorithm>
 #include <iostream>
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2\core.hpp"
+#include "opencv2\highgui.hpp"
+#include "opencv2\imgproc.hpp"
+
+using namespace OpenCV;
 
 const int winWidth = 800;
 const int winHeight = 600;
@@ -21,6 +24,7 @@ int greenPointsCounter = 0;
 
 bool pushBlackLine = false;
 bool pushGreenLine = false;
+bool onGreenLine = false;
 
 //határvonalak
 Line rightSideLine = Line(Point(winWidth, 0), Point(winWidth, winHeight));
@@ -58,13 +62,15 @@ void createBasket() {
 }
 
 //Kamera adatok
-void detect(int value) {
-	colorDetection.detection(cap);
+void detect(int value)
+{
+	ColorDetection detection = ColorDetection();
+	detection.Detection(cap);
 
-
+	lines = detection.GetLines();
 
 	glutTimerFunc(10, detect, 0);
-	glutPostRedisplay();
+
 }
 
 void init(void)
@@ -75,14 +81,14 @@ void init(void)
 	glMatrixMode(GL_MODELVIEW);
 	gluOrtho2D(0.0, winWidth, 0.0, winHeight);
 
-	cap = cv::VideoCapture(1);
-	//colorDetection.createTask();
+	cap = cv::VideoCapture(0);
+	colorDetection.createTask();
+
 	createBasket();
 }
 
 void drawCircle(Point p, double r)
 {
-
 	glColor3d(1.0, 0.0, 0.3);
 	glBegin(GL_TRIANGLE_FAN);
 
@@ -91,7 +97,6 @@ void drawCircle(Point p, double r)
 	}
 
 	glEnd();
-
 }
 
 bool isPointOnLine(Point a, Line line)
@@ -173,13 +178,16 @@ Point twoLineIntersection(Line line1, Line line2) {
 }
 
 void drawLine() {
-
 	for (int i = 0; i < lines.size(); i++) {
 
 		double red = lines.at(i).getRed();
 		double green = lines.at(i).getGreen();
 		double blue = lines.at(i).getBlue();
-		glLineWidth(6.0);
+
+	//	std::cout << "red" << red << std::endl;
+	//	std::cout << "green" << green << std::endl;
+	//	std::cout << "blue" << blue << std::endl;
+		glLineWidth(3.0);
 		glColor3d(red, green, blue);
 		glBegin(GL_LINES);
 
@@ -188,8 +196,6 @@ void drawLine() {
 
 		glEnd();
 	}
-
-
 }
 
 double vectorLength(Point &V)
@@ -212,158 +218,162 @@ void isInsideBasket() {
 	Line line1 = Line(basketPoints.at(0), basketPoints.at(1));
 	Line line2 = Line(basketPoints.at(1), basketPoints.at(2));
 	Line line3 = Line(basketPoints.at(2), basketPoints.at(3));
-	
-		Point o = ball.getOrigo();
 
-		Line normalVectorLine1 = Utils::calculateNormalVector(line1,o);
-		Line normalVectorLine2 = Utils::calculateNormalVector(line2, o);
-		Line normalVectorLine3 = Utils::calculateNormalVector(line3,o);
+	Point o = ball.getOrigo();
 
-		Point intersect1 = twoLineIntersection(normalVectorLine1, line1);
-		Point intersect2 = twoLineIntersection(normalVectorLine2, line2);
-		Point intersect3 = twoLineIntersection(normalVectorLine3, line3);
+	Line normalVectorLine1 = Utils::calculateNormalVector(line1, o);
+	Line normalVectorLine2 = Utils::calculateNormalVector(line2, o);
+	Line normalVectorLine3 = Utils::calculateNormalVector(line3, o);
 
-		glPointSize(4.0);
-		glColor3d(1.0, 0.0, 0.0);
-		glBegin(GL_POINTS);
-		glVertex2d(intersect1.x, intersect1.y);
-		glVertex2d(intersect2.x, intersect2.y);
-		glVertex2d(intersect3.x, intersect3.y);
-		glEnd();
+	Point intersect1 = twoLineIntersection(normalVectorLine1, line1);
+	Point intersect2 = twoLineIntersection(normalVectorLine2, line2);
+	Point intersect3 = twoLineIntersection(normalVectorLine3, line3);
 
-		if (o.x > line1.a.x && o.x < line3.a.x && o.y > line2.a.y && o.y < line1.a.y - ball.getRadius()) {
-			ball.setVelocityX(0);
-			ball.setVelocityY(0);
+	glPointSize(4.0);
+	glColor3d(1.0, 0.0, 0.0);
+	glBegin(GL_POINTS);
+	glVertex2d(intersect1.x, intersect1.y);
+	glVertex2d(intersect2.x, intersect2.y);
+	glVertex2d(intersect3.x, intersect3.y);
+	glEnd();
+
+	if (o.x > line1.a.x && o.x < line3.a.x && o.y > line2.a.y && o.y < line1.a.y - ball.getRadius()) {
+		ball.setVelocityX(0);
+		ball.setVelocityY(0);
+	}
+
+	if (distanceOfPointsFromLine(line2, o) < ball.getRadius())
+	{
+		if (isPointOnLine(intersect2, line2) && o.y < intersect2.y) {
+			doMirroring(line2);
 		}
+	}
+	if (distanceOfPointsFromLine(line1, o) < ball.getRadius()) {
 
-		if (distanceOfPointsFromLine(line2, o) < ball.getRadius())
-		{
-			if (isPointOnLine(intersect2, line2) && o.y < intersect2.y) {
-				doMirroring(line2);
-			}
+		if (isPointOnLine(intersect1, line1) && o.x < intersect1.x) {
+			doMirroring(line1);
+
 		}
-		if (distanceOfPointsFromLine(line1, o) < ball.getRadius()) {
+	}
+	if (distanceOfPointsFromLine(line3, o) < ball.getRadius()) {
 
-			if (isPointOnLine(intersect1, line1) && o.x < intersect1.x) {
-				doMirroring(line1);
 
-			}
+		if (isPointOnLine(intersect3, line3) && o.x > intersect3.x) {
+			doMirroring(line3);
 		}
-		if (distanceOfPointsFromLine(line3, o) < ball.getRadius()) {
+	}
 
-
-			if (isPointOnLine(intersect3, line3) && o.x > intersect3.x) {
-				doMirroring(line3);
-			}
-		}
-	
 }
 
 void move(int value) {
 
-		doMirroring(rightSideLine);
-		doMirroring(leftSideLine);
-		doMirroring(topSideLine);
-		doMirroring(botSideLine);
-		isInsideBasket();
+	doMirroring(rightSideLine);
+	doMirroring(leftSideLine);
+	doMirroring(topSideLine);
+	doMirroring(botSideLine);
+	isInsideBasket();
 
-		if (lines.size() >= 1) {
-			for (int j = 0; j < lines.size(); j++) {
+	if (lines.size() >= 1) {
+		for (int j = 0; j < lines.size(); j++) {
 
-				double red = lines.at(j).getRed();
-				double green = lines.at(j).getGreen();
-				double blue = lines.at(j).getBlue();
+			double red = lines.at(j).getRed();
+			double green = lines.at(j).getGreen();
+			double blue = lines.at(j).getBlue();
 
-					if (distanceOfPointsFromLine(lines.at(j), ball.getOrigo()) < ball.getRadius())
-				{
-					Point O = ball.getOrigo();
+			if (distanceOfPointsFromLine(lines.at(j), ball.getOrigo()) < ball.getRadius())
+			{
+				Point O = ball.getOrigo();
 
-					Point n;
+				Point n;
 
-					if (lines.at(j).a.x < lines.at(j).b.x) {
-						n.x = lines.at(j).a.y - lines.at(j).b.y;
-						n.y = lines.at(j).b.x - lines.at(j).a.x;
-					}
-					else {
-						n.x = lines.at(j).b.y - lines.at(j).a.y;
-						n.y = lines.at(j).a.x - lines.at(j).b.x;
-					}
+				if (lines.at(j).a.x < lines.at(j).b.x) {
+					n.x = lines.at(j).a.y - lines.at(j).b.y;
+					n.y = lines.at(j).b.x - lines.at(j).a.x;
+				}
+				else {
+					n.x = lines.at(j).b.y - lines.at(j).a.y;
+					n.y = lines.at(j).a.x - lines.at(j).b.x;
+				}
 
-					Point ON = O - n;
-					Line normalVectorLine = Line(O, ON);
+				Point ON = O - n;
+				Line normalVectorLine = Line(O, ON);
 
-					Point intersect = twoLineIntersection(normalVectorLine, lines.at(j));
+				Point intersect = twoLineIntersection(normalVectorLine, lines.at(j));
 
-					glPointSize(4.0);
-					glColor3d(0.0, 0.0, 0.0);
-					glBegin(GL_POINTS);
-					glVertex2d(intersect.x, intersect.y);
-					glEnd();
+				glPointSize(4.0);
+				glColor3d(0.0, 0.0, 0.0);
+				glBegin(GL_POINTS);
+				glVertex2d(intersect.x, intersect.y);
+				glEnd();
 
-					if (isPointOnLine(intersect, lines.at(j))) {
-						if (green == 1) {
+				if (isPointOnLine(intersect, lines.at(j))) {
+					if (green == 1) {
 
-								if (ball.getOrigo().y > lines.at(j).a.y) {
+						if (ball.getOrigo().y > lines.at(j).a.y) {
+							onGreenLine = true;
+							//meredekség kiszámítása, ennyivel fog változni a kör középpontja a csúszáshoz
+							Point p = lines.at(j).a - lines.at(j).b;
+							p = p / 150;
 
-								//meredekség kiszámítása, ennyivel fog változni a kör középpontja a csúszáshoz
-								Point p = lines.at(j).a - lines.at(j).b;
-								p = p / 150;
 
-
-								ball.setVelocityX(p.getX());
-								ball.setVelocityY(p.getY());
-							}
-							else {
-								Point v = Utils::mirroring(Point(ball.getVelocityX(), ball.getVelocityY()), vectorize(lines.at(j).a, lines.at(j).b));
-								ball.setVelocityX(v.getX());
-								ball.setVelocityY(v.getY());
-							}
+							ball.setVelocityX(p.getX());
+							ball.setVelocityY(p.getY());
 						}
-
-						if (green == 0 && blue == 0 && red == 0) {
-
+						else {
 							Point v = Utils::mirroring(Point(ball.getVelocityX(), ball.getVelocityY()), vectorize(lines.at(j).a, lines.at(j).b));
 							ball.setVelocityX(v.getX());
 							ball.setVelocityY(v.getY());
-
 						}
 					}
+					if (green == 0 && blue == 0 && red == 0) {
 
+						Point v = Utils::mirroring(Point(ball.getVelocityX(), ball.getVelocityY()), vectorize(lines.at(j).a, lines.at(j).b));
+						ball.setVelocityX(v.getX());
+						ball.setVelocityY(v.getY());
+
+					}
 				}
 
 			}
+			else {
+				onGreenLine = false;
+			}
+
 		}
+	}
 
-		Point origo = ball.getOrigo();
+	Point origo = ball.getOrigo();
 
-		float y = ball.getVelocityY();
-		float x = ball.getVelocityX();
+	float y = ball.getVelocityY();
+	float x = ball.getVelocityX();
 
+	if (!onGreenLine) {
 		if (y < 0) {
-			y -= 0.007;
+			y -= 0.07;
 			ball.setVelocityY(y);
 		}
 		else if (y > 0) {
-			y -= 0.009;
+			y -= 0.09;
 			ball.setVelocityY(y);
 		}
 
 		if (x > 0) {
-			x -= 0.001;
+			x -= 0.01;
 			ball.setVelocityX(x);
 		}
 		else if (x < 0) {
-			x += 0.001;
+			x += 0.01;
 			ball.setVelocityX(x);
 		}
+	}
 
-		origo.x += ball.getVelocityX();
-		origo.y += ball.getVelocityY();
-		ball.setOrigo(origo);
+	origo.x += ball.getVelocityX();
+	origo.y += ball.getVelocityY();
+	ball.setOrigo(origo);
 
-		glutTimerFunc(3, move, 0);
-		glutPostRedisplay();
-	
+	glutTimerFunc(3, move, 0);
+	glutPostRedisplay();
+
 }
 
 void controlMouse(int button, int state, int xMouse, int yMouse)
@@ -428,14 +438,13 @@ void controlMouse(int button, int state, int xMouse, int yMouse)
 
 }
 
-void display() {
-
-
+void display()
+{
 	glClear(GL_COLOR_BUFFER_BIT);
 	drawBakset();
 	drawCircle(ball.getOrigo(), ball.getRadius());
 	drawLine();
-	
+
 	glutSwapBuffers();
 
 }
@@ -450,8 +459,8 @@ int main(int argc, char** argv)
 
 	init();
 	glutDisplayFunc(display);
-	glutTimerFunc(1000/60, move, 0);
-	glutTimerFunc(1000/30, detect, 0);
+	glutTimerFunc(1000/120, move, 0);
+	glutTimerFunc(1000/120, detect, 0);
 
 	glutMouseFunc(controlMouse);
 	glutMainLoop();

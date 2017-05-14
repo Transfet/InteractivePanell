@@ -1,26 +1,35 @@
 #pragma once
-#include "opencv2/highgui/highgui.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
-class ColorDetection {
 
-public:
-	ColorDetection();
-	 void detection(cv::VideoCapture);
-	 void createTask();
-	 cv::Mat getGreenTresholded();
-private:
+#include "opencv2\core.hpp"
+#include "opencv2\highgui.hpp"
+#include "opencv2\imgproc.hpp"
 
-	cv::Mat imgThresholded;
-	cv::Mat imgOriginal;
-	cv::Mat copy;
+#include "line.h"
+#include "point.h"
 
-	int iLowH = 38;
-	int iHighH = 75;
+namespace OpenCV
+{
+	class ColorDetection
+	{
+	public:
+		ColorDetection();
+		void Detection(cv::VideoCapture);
+		std::vector<Line> GetLines();
+		void createTask();
 
-	int iLowS = 56;
-	int iHighS = 228;
+	private:
+		std::vector<Line> Lines;
+		cv::Mat imgHSV;
+		cv::Mat imgTresholded;
 
-	int iLowV = 65;
-	int iHighV = 255;
+		int iLowH = 38;
+		int iHighH = 75;
 
-};
+		int iLowS = 56;
+		int iHighS = 228;
+
+		int iLowV = 65;
+		int iHighV = 255;
+	};
+}
+
