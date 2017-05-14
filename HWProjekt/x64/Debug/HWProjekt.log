@@ -1,0 +1,30 @@
+﻿  main.cpp
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(48): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(97): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(144): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(145): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(147): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(159): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(160): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(161): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(162): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(164): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(165): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(166): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(167): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(219): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(220): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(327): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(328): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(332): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(333): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(340): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(341): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(357): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(361): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(366): warning C4305: '-=': truncation from 'double' to 'float'
+c:\users\transfet\desktop\opencv\hwprojekt\hwprojekt\main.cpp(370): warning C4305: '+=': truncation from 'double' to 'float'
+  ColorDetection.cpp
+  Generating Code...
+  HWProjekt.vcxproj -> C:\Users\Transfet\Desktop\opencv\HWProjekt\x64\Debug\HWProjekt.exe
+  HWProjekt.vcxproj -> C:\Users\Transfet\Desktop\opencv\HWProjekt\x64\Debug\HWProjekt.pdb (Full PDB)
